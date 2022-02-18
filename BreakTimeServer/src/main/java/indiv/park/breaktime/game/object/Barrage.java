@@ -32,7 +32,7 @@ public class Barrage {
 	
 	public void updatePosition() {
 		position.y.addAndGet(1 * acc.intValue());
-		if (del.intValue() % 6 == 0) {
+		if (del.intValue() % 10 == 0) {
 			acc.incrementAndGet();
 		}
 		del.incrementAndGet();

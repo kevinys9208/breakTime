@@ -15,7 +15,12 @@
 			<li>Enter를 누르면 게임을 시작합니다.</li>
 		</ul>
 		<p>웹소켓 접속주소</p>
-		<input type="text" id="ip" style="width: 400px;">
+		<input type="text" id="ip" style="width: 300px;" disabled="disabled">
+		<select id="ipSelect">
+			<option value="localhost:45000" selected>localhost</option>
+			<option value="10.10.20.116:45000">Server-Jookwang</option>
+			<option value="">직접입력</option>
+		</select>
 	</div>
 	<div class="stage">
 		<div class="notice" id="notice"></div>

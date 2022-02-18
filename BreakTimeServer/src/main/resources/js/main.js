@@ -219,6 +219,20 @@ function initializeControlEvent() {
 			webSocket.send('LOFF');
 		}
 	});
+	
+	document.getElementById('ipSelect').addEventListener('change', function() {
+		var ipSelected = this.options[this.selectedIndex].value;
+		var input = document.getElementById('ip');
+		
+		if (ipSelected == '') {
+			input.value = '';
+			input.disabled = false;
+			
+		} else {
+			input.value = 'ws://' + ipSelected + '/break';
+			input.disabled = true;
+		}
+	});
 }
 
 function initializeDefaultServerIP() {
