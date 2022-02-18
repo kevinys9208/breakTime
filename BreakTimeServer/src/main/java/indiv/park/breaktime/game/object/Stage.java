@@ -153,7 +153,7 @@ public class Stage {
 				@Override
 				public void run() { createBarrage(); }
 				
-			}, 0, 500);
+			}, 100, 500);
 			
 			logger.info(LoggerTemplate.CREATE_STEPTIMER, step);
 			
