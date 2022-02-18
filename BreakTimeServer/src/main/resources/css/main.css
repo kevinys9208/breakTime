@@ -1,0 +1,37 @@
+body {
+    	margin: 0;
+    	padding: 0;
+}
+
+.stage {
+	position: relative;
+	
+	width: 800px;
+	height: 800px;
+	
+	border: 1px solid black;
+	
+	margin: auto;
+	
+	overflow: hidden;
+}
+
+.notice {
+	position: absolute;
+	
+	width: 800px;
+	height: 200px;
+	
+	top: 300px;
+	
+	text-align: center;
+	
+	line-height: 200px;
+	
+	font-size: 130px;	
+	font-weight: bold;
+}
+
+.read {
+	position: absolute;
+}

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Break Time Game</title>
+<link rel="stylesheet" type="text/css" href="./css/main.css">
+<script type="text/javascript" src="./js/main.js"></script>
+<script type="text/javascript" src="./js/object.js"></script>
+</head>
+<body>
+	<div class="read">
+		<p>조작법</p>
+		<ul>
+			<li>좌우 방향키를 사용하여 움직입니다.</li>
+			<li>Space를 누르면 게임에 재접속합니다.</li>
+			<li>Enter를 누르면 게임을 시작합니다.</li>
+		</ul>
+		<p>웹소켓 접속주소</p>
+		<input type="text" id="ip" style="width: 400px;">
+	</div>
+	<div class="stage">
+		<div class="notice" id="notice"></div>
+		<canvas id="stage" width="800" height="800"></canvas>
+	</div>
+</body>
+</html>
