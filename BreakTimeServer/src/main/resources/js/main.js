@@ -172,7 +172,7 @@ function initializeControlEvent() {
 }
 
 function initializeDefaultServerIP() {
-	document.getElementById('ip').value = 'ws://10.10.20.116:45000/break'
+	document.getElementById('ip').value = 'ws://10.10.20.116:45000/break';
 }
 
 async function waitReadyState() {

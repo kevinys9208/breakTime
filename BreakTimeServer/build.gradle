@@ -38,3 +38,7 @@ sourceSets {
 		resources.srcDirs = ["src/main/java", "src/main/resources"]
 	}
 }
+
+compileJava {
+	options.encoding = 'UTF-8'
+}
