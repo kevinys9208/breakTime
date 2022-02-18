@@ -8,6 +8,8 @@ public class LoggerTemplate {
 	public static final String CREATE_BARRAGE = "Barrage 객체가 생성되었습니다. #[ {} ]";
 	public static final String REMOVE_BRRAGE = "Barrage 객체가 제거되었습니다. #[ {} ]";
 	
+	public static final String CREATE_STEPTIMER = "StepTimer를 생성합니다. 현재 스텝: {}";
+	
 	public static final String START_STAGE = "Stage를 시작합니다.";
 	public static final String STOP_STAGE = "Stage를 종료합니다.";
 	

@@ -23,8 +23,10 @@ public class Stage {
 	
 	public final ConcurrentHashMap<ChannelId, Character> characterMap;
 	public final ConcurrentHashMap<Integer, Barrage> barrageMap;
+	public final ConcurrentHashMap<Integer, Timer> timerMap;
 	
 	public final AtomicInteger idCreator;
+	public final AtomicInteger stepCreator;
 	
 	public final AtomicBoolean isStart;
 	public final AtomicLong startTime;
@@ -42,20 +44,21 @@ public class Stage {
 	private final Timer mainTimer;
 	
 	private Timer createTimer;
+	private Timer stepTimer;
 	
 	private Stage() {
 		characterMap = new ConcurrentHashMap<>();
 		barrageMap = new ConcurrentHashMap<>();
+		timerMap = new ConcurrentHashMap<>();
 		
 		idCreator = new AtomicInteger();
+		stepCreator = new AtomicInteger();
 		
 		mainTimer = new Timer();
 		mainTimer.schedule(new MainTask(), 0, 10);
 		
 		isStart = new AtomicBoolean();
 		startTime = new AtomicLong();
-		
-		createTimer = new Timer();
 	}
 	
 	public synchronized void start() {
@@ -82,6 +85,14 @@ public class Stage {
 			
 		}, 3000, 100);
 		
+		stepTimer = new Timer();
+		stepTimer.schedule(new TimerTask() {
+			
+			@Override
+			public void run() { createTimer(); }
+			
+		}, 13000, 10000);
+		
 		logger.info(LoggerTemplate.START_STAGE);
 	}
 	
@@ -89,10 +100,15 @@ public class Stage {
 		isStart.set(false);
 		
 		createTimer.cancel();
+		stepTimer.cancel();
 		idCreator.set(0);
+		stepCreator.set(0);
 		
 		characterMap.clear();
 		barrageMap.clear();
+		
+		timerMap.values().forEach(Timer::cancel);
+		timerMap.clear();
 		
 		logger.info(LoggerTemplate.STOP_STAGE);
 	}
@@ -123,6 +139,27 @@ public class Stage {
 	
 	public boolean removeBarrage(int key) {
 		return barrageMap.remove(key) != null ? true : false;
+	}
+	
+	public void createTimer() {
+		int step = stepCreator.incrementAndGet();
+		
+		Timer stepTimer = new Timer();
+		
+		Timer value = timerMap.putIfAbsent(step, stepTimer);
+		if (value == null) {
+			stepTimer.schedule(new TimerTask() {
+				
+				@Override
+				public void run() { createBarrage(); }
+				
+			}, 0, 500);
+			
+			logger.info(LoggerTemplate.CREATE_STEPTIMER, step);
+			
+		} else {
+			stepTimer.cancel();
+		}
 	}
 	
 	public long calcTime(long currentTimeMillis) {
