@@ -39,13 +39,13 @@ public class Character {
 	
 	public void updatePosition() {
 		if (right.get()) {
-			if (position.x.addAndGet(13) > 770) {
+			if (position.x.addAndGet(6) > 770) {
 				position.x.set(770);
 			}
 		}
 		
 		if (left.get()) {
-			if (position.x.addAndGet(-13) < 30) {
+			if (position.x.addAndGet(-6) < 30) {
 				position.x.set(30);
 			}
 		}

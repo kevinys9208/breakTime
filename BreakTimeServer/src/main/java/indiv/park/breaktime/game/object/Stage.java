@@ -8,7 +8,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 import indiv.park.breaktime.game.LoggerTemplate;
-import indiv.park.breaktime.game.MainTask;
+import indiv.park.breaktime.game.MainRunnable;
 import indiv.park.breaktime.game.event.EventListener;
 import indiv.park.breaktime.net.NetChannelGroup;
 import io.netty.channel.Channel;
@@ -41,7 +41,7 @@ public class Stage {
 		public boolean apply(Object key) { return removeCharacter((Channel) key); }
 	};
 	
-	private final Timer mainTimer;
+	private final Thread mainThread;
 	
 	private Timer createTimer;
 	private Timer stepTimer;
@@ -54,8 +54,8 @@ public class Stage {
 		idCreator = new AtomicInteger();
 		stepCreator = new AtomicInteger();
 		
-		mainTimer = new Timer();
-		mainTimer.schedule(new MainTask(), 0, 10);
+		mainThread = new Thread(new MainRunnable());
+		mainThread.start();
 		
 		isStart = new AtomicBoolean();
 		startTime = new AtomicLong();
@@ -167,14 +167,14 @@ public class Stage {
 	}
 
 	public void sendData() {
-		StringBuilder sb = new StringBuilder();
+		StringBuffer sb = new StringBuffer();
 		for (Character character : characterMap.values()) {
 			sb.append(character.returnData());
-			sb.append(":");
+			sb.append(LoggerTemplate.SEPARATOR);
 		}
 		for (Barrage barrage : barrageMap.values()) {
 			sb.append(barrage.returnData());
-			sb.append(":");
+			sb.append(LoggerTemplate.SEPARATOR);
 		}
 		sb.deleteCharAt(sb.length() - 1);
 		NetChannelGroup.INSTANCE.writeAndFlush(new TextWebSocketFrame(sb.toString()));

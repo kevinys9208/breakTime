@@ -1,37 +1,61 @@
 package indiv.park.breaktime.game;
 
 import java.util.Collection;
-import java.util.TimerTask;
 
-import indiv.park.breaktime.game.object.Character;
 import indiv.park.breaktime.game.object.Barrage;
+import indiv.park.breaktime.game.object.Character;
 import indiv.park.breaktime.game.object.Stage;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class MainTask extends TimerTask {
+public class MainRunnable implements Runnable {
 
 	@Override
 	public void run() {
-		updateCharactersPosition();
-		updateBarragePosition();
-		updateStageToPlayer();
-		checkCollision();
+		long currStart = System.currentTimeMillis();
+		long nowStart = 0;
+		long def = 0;
+
+		while (true) {
+			try {
+				updateCharactersPosition();
+				updateBarragePosition();
+
+				nowStart = System.currentTimeMillis();
+
+				def = nowStart - currStart;
+//				logger.info(LoggerTemplate.FRAME_DEF, def);
+				
+				if (def <= 7) {
+					Thread.sleep(7 - def);
+				}
+
+				currStart = System.currentTimeMillis();
+				
+				updateStageToPlayer();
+				checkCollision();
+
+				Thread.sleep(3);
+
+			} catch (Exception e) {
+				//
+			}
+		}
 	}
-	
+
 	private void updateCharactersPosition() {
 		for (Character character : Stage.INSTANCE.characterMap.values()) {
 			character.updatePosition();
 		}
 	}
-	
+
 	private void updateBarragePosition() {
 		for (Barrage barrage : Stage.INSTANCE.barrageMap.values()) {
 			barrage.updatePosition();
 			barrage.isLast();
 		}
 	}
-	
+
 	private void checkCollision() {
 		for (Barrage barrage : Stage.INSTANCE.barrageMap.values()) {
 			Collection<Character> characters = Stage.INSTANCE.characterMap.values();
@@ -40,7 +64,7 @@ public class MainTask extends TimerTask {
 			}
 		}
 	}
-	
+
 	private void updateStageToPlayer() {
 		if (Stage.INSTANCE.characterMap.isEmpty()) {
 			if (Stage.INSTANCE.isStart.get()) {
@@ -49,7 +73,7 @@ public class MainTask extends TimerTask {
 			}
 			return;
 		}
-		
+
 		Stage.INSTANCE.sendData();
 	}
 }

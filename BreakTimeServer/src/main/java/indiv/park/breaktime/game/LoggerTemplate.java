@@ -21,4 +21,7 @@ public class LoggerTemplate {
 	public static final String FORMAT_TIME = "R,%d";
 
 	public static final String CURR_CONNECTION = "현재 Player 수: {}, 현재 Character 수: {}";
+	
+	public static final String FRAME_DEF = "Frame Def: {}";
+	public static final String SEPARATOR = ":";
 }

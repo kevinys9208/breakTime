@@ -2,11 +2,22 @@ var countInterval;
 var notice;
 var number;
 
-var objectMap;
 var functionMap;
 
 var canvas;
 var ctx;
+
+var barrageCanvas;
+var barrageCtx;
+
+var selfCanvas;
+var selfCtx;
+
+var otherCanvas;
+var otherCtx;
+
+var backCanvas;
+var backCtx;
 
 var barrageImg;
 var selfImg;
@@ -33,22 +44,58 @@ function initializeVariables() {
 	functionMap.set('O', handleOn);
 	functionMap.set('E', handleError);
 	functionMap.set('R', handleResult);
-	
+
 	canvas = document.getElementById('stage');
 	ctx = canvas.getContext('2d');
-	
-	barrageImg= new Image();
+
+	barrageImg = new Image();
 	barrageImg.src = './img/raindrop.png';
+	barrageImg.onload = function() {
+		barrageCanvas = document.createElement('canvas');
+		barrageCtx = barrageCanvas.getContext('2d');
 
-	selfImg= new Image();
+		barrageCanvas.width = 60;
+		barrageCanvas.height = 60;
+
+		barrageCtx.drawImage(barrageImg, 0, 0);
+	}
+
+	selfImg = new Image();
 	selfImg.src = './img/character_self.png';
+	selfImg.onload = function() {
+		selfCanvas = document.createElement('canvas');
+		selfCtx = selfCanvas.getContext('2d');
 
-	otherImg= new Image();
+		selfCanvas.width = 60;
+		selfCanvas.height = 60;
+
+		selfCtx.drawImage(selfImg, 0, 0);
+	}
+
+	otherImg = new Image();
 	otherImg.src = './img/character_other.png';
+	otherImg.onload = function() {
+		otherCanvas = document.createElement('canvas');
+		otherCtx = otherCanvas.getContext('2d');
 
-	backImg= new Image();
+		otherCanvas.width = 60;
+		otherCanvas.height = 60;
+
+		otherCtx.drawImage(otherImg, 0, 0);
+	}
+
+	backImg = new Image();
 	backImg.src = './img/background.png';
-	
+	backImg.onload = function() {
+		backCanvas = document.createElement('canvas');
+		backCtx = backCanvas.getContext('2d');
+
+		backCanvas.width = 800;
+		backCanvas.height = 800;
+
+		backCtx.drawImage(backImg, 0, 0);
+	}
+
 	notice = document.getElementById('notice');
 	number = 3;
 }
@@ -76,7 +123,7 @@ function handleMessage(e) {
 	//console.log(Date.now());
 	
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
-	ctx.drawImage(backImg, 0, 0);
+	ctx.drawImage(backCanvas, 0, 0);
 
 	var dataList = e.data.split(':');
 	dataList
@@ -94,13 +141,16 @@ function callFunction(dataArray) {
 }
 
 function handleBarrage(dataArray) {
-	var barrage = new Barrage(dataArray[1], dataArray[2], dataArray[3]);
-	barrage.draw();
+	ctx.drawImage(barrageCanvas, Number(dataArray[2]) - 30, Number(dataArray[3]) - 30);
 }
 
 function handleCharacter(dataArray) {
-	var character = new Character(dataArray[1], dataArray[2], dataArray[3]);
-	character.draw(characterId);
+	if (characterId == dataArray[1]) {
+		ctx.drawImage(selfCanvas, Number(dataArray[2]) - 30, Number(dataArray[3]) - 30);
+
+	} else {
+		ctx.drawImage(otherCanvas, Number(dataArray[2]) - 30, Number(dataArray[3]) - 30);
+	}
 }
 
 function handleId(dataArray) {
@@ -122,7 +172,7 @@ function showCount() {
 		clearInterval(countInterval);
 		return;
 	}
-	
+
 	notice.innerText = number;
 	number--;
 }
@@ -139,9 +189,9 @@ function handleError() {
 
 function handleResult(dataArray) {
 	var result = Number(dataArray[1]) / 1000;
-	
+
 	notice.style['font-size'] = '20px';
-	notice.innerText = '기록: ' + result + ' 초 ' ;
+	notice.innerText = '기록: ' + result + ' 초 ';
 }
 
 function initializeControlEvent() {
@@ -160,7 +210,7 @@ function initializeControlEvent() {
 			webSocket.send('START');
 		}
 	});
-	
+
 	document.addEventListener('keyup', function(e) {
 		if (e.code == 'ArrowRight') {
 			webSocket.send('ROFF');
@@ -172,30 +222,30 @@ function initializeControlEvent() {
 }
 
 function initializeDefaultServerIP() {
-	document.getElementById('ip').value = 'ws://10.10.20.116:45000/break';
+	document.getElementById('ip').value = 'ws://localhost:45000/break';
 }
 
 async function waitReadyState() {
 	var opened = await connection(webSocket);
 	if (opened) {
-	  webSocket.send('REQUEST_ID');
+		webSocket.send('REQUEST_ID');
 	}
 }
 
-async function connection (socket, timeout = 10000) {
-  const isOpened = () => (socket.readyState === WebSocket.OPEN)
+async function connection(socket, timeout = 10000) {
+	const isOpened = () => (socket.readyState === WebSocket.OPEN)
 
-  if (socket.readyState !== WebSocket.CONNECTING) {
-    return isOpened()
-  }
-  else {
-    const intrasleep = 100
-    const ttl = timeout / intrasleep // time to loop
-    let loop = 0
-    while (socket.readyState === WebSocket.CONNECTING && loop < ttl) {
-      await new Promise(resolve => setTimeout(resolve, intrasleep))
-      loop++
-    }
-    return isOpened()
-  }
+	if (socket.readyState !== WebSocket.CONNECTING) {
+		return isOpened()
+	}
+	else {
+		const intrasleep = 100
+		const ttl = timeout / intrasleep // time to loop
+		let loop = 0
+		while (socket.readyState === WebSocket.CONNECTING && loop < ttl) {
+			await new Promise(resolve => setTimeout(resolve, intrasleep))
+			loop++
+		}
+		return isOpened()
+	}
 }
