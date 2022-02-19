@@ -2,6 +2,7 @@ package indiv.park.breaktime.game.object;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import indiv.park.breaktime.Application;
 import indiv.park.breaktime.game.LoggerTemplate;
 import indiv.park.breaktime.game.event.EventListener;
 import indiv.park.breaktime.net.NetChannelGroup;
@@ -15,22 +16,24 @@ public class Character {
 	
 	public final int id;
 	public final Channel channel;
-	public final EventListener remover;
+	public final Position position;
 	
 	public final AtomicBoolean left;
 	public final AtomicBoolean right;
 	
-	private final Position position;
+	private final EventListener remover;
+	private final int characterDef;
 	
 	public Character(int id, Channel channel, EventListener remover) {
 		this.id = id;
 		this.channel = channel;
+		this.position = Position.createNewPosition(400, 765);
+		
+		this.left = new AtomicBoolean();
+		this.right = new AtomicBoolean();
+		
 		this.remover = remover;
-		
-		left = new AtomicBoolean();
-		right = new AtomicBoolean();
-		
-		position = Position.createNewPosition(400, 765);
+		this.characterDef = 5 * Application.FRAME_WEIGHT;
 		
 		logger.info(LoggerTemplate.CREATE_CHARACTER, id);
 		
@@ -39,13 +42,13 @@ public class Character {
 	
 	public void updatePosition() {
 		if (right.get()) {
-			if (position.x.addAndGet(5) > 770) {
+			if (position.x.addAndGet(characterDef) > 770) {
 				position.x.set(770);
 			}
 		}
 		
 		if (left.get()) {
-			if (position.x.addAndGet(-5) < 30) {
+			if (position.x.addAndGet(-1 * characterDef) < 30) {
 				position.x.set(30);
 			}
 		}

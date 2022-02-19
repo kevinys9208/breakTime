@@ -2,6 +2,7 @@ package indiv.park.breaktime.game;
 
 import java.util.Collection;
 
+import indiv.park.breaktime.Application;
 import indiv.park.breaktime.game.object.Barrage;
 import indiv.park.breaktime.game.object.Character;
 import indiv.park.breaktime.game.object.Stage;
@@ -14,7 +15,9 @@ public class MainRunnable implements Runnable {
 	public void run() {
 		long currStart = System.currentTimeMillis();
 		long nowStart = 0;
-		long def = 0;
+		
+		int targetDef = 7 * Application.FRAME_WEIGHT;
+		int def = 0;
 
 		while (true) {
 			try {
@@ -23,11 +26,11 @@ public class MainRunnable implements Runnable {
 
 				nowStart = System.currentTimeMillis();
 
-				def = nowStart - currStart;
+				def = (int) (nowStart - currStart);
 //				logger.info(LoggerTemplate.FRAME_DEF, def);
 				
-				if (def <= 7) {
-					Thread.sleep(7 - def);
+				if (def <= targetDef) {
+					Thread.sleep(targetDef - def);
 				}
 
 				currStart = System.currentTimeMillis();

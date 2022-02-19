@@ -2,6 +2,7 @@ package indiv.park.breaktime.game.object;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+import indiv.park.breaktime.Application;
 import indiv.park.breaktime.game.LoggerTemplate;
 import indiv.park.breaktime.game.event.EventListener;
 import lombok.RequiredArgsConstructor;
@@ -18,22 +19,25 @@ public class Barrage {
 	public final AtomicInteger acc;
 	
 	private final EventListener remover;
+	private final int barrageDef;
 	
 	public Barrage(int id, EventListener remover) {
-		this.remover = remover;
 		this.id = id;
 		this.position = Position.createRandomPosition();
 		
 		this.del = new AtomicInteger(0);
 		this.acc = new AtomicInteger(0);
 		
+		this.remover = remover;
+		this.barrageDef = 8 / Application.FRAME_WEIGHT;
+		
 		logger.debug(LoggerTemplate.CREATE_BARRAGE, id);
 	}
 	
 	public void updatePosition() {
 		position.y.addAndGet(1 * acc.intValue());
-		if (del.intValue() % 10 == 0) {
-			acc.incrementAndGet();
+		if (del.intValue() % barrageDef == 0) {
+			acc.addAndGet(Application.FRAME_WEIGHT);
 		}
 		del.incrementAndGet();
 	}

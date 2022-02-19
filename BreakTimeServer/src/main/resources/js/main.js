@@ -58,7 +58,7 @@ function initializeVariables() {
 		barrageCanvas.height = 60;
 
 		barrageCtx.drawImage(barrageImg, 0, 0);
-	}
+	};
 
 	selfImg = new Image();
 	selfImg.src = './img/character_self.png';
@@ -70,7 +70,7 @@ function initializeVariables() {
 		selfCanvas.height = 60;
 
 		selfCtx.drawImage(selfImg, 0, 0);
-	}
+	};
 
 	otherImg = new Image();
 	otherImg.src = './img/character_other.png';
@@ -82,7 +82,7 @@ function initializeVariables() {
 		otherCanvas.height = 60;
 
 		otherCtx.drawImage(otherImg, 0, 0);
-	}
+	};
 
 	backImg = new Image();
 	backImg.src = './img/background.png';
@@ -94,7 +94,7 @@ function initializeVariables() {
 		backCanvas.height = 800;
 
 		backCtx.drawImage(backImg, 0, 0);
-	}
+	};
 
 	notice = document.getElementById('notice');
 	number = 3;
@@ -110,11 +110,11 @@ function initializeWebSocket() {
 	webSocket.onopen = function() {
 		console.log('webSocket open');
 		waitReadyState();
-	}
+	};
 
 	webSocket.onclose = function() {
 		console.log('webSocket close');
-	}
+	};
 
 	webSocket.onmessage = handleMessage;
 }
@@ -204,7 +204,7 @@ function initializeControlEvent() {
 		}
 		else if (e.code == 'Space') {
 			notice.innerText = '';
-			initializeWebSocket()
+			initializeWebSocket();
 		}
 		else if (e.code == 'Enter') {
 			webSocket.send('START');
@@ -239,27 +239,20 @@ function initializeDefaultServerIP() {
 	document.getElementById('ip').value = 'ws://localhost:45000/break';
 }
 
-async function waitReadyState() {
-	var opened = await connection(webSocket);
+function waitReadyState() {
+	var opened = connection(webSocket);
 	if (opened) {
 		webSocket.send('REQUEST_ID');
 	}
 }
 
-async function connection(socket, timeout = 10000) {
-	const isOpened = () => (socket.readyState === WebSocket.OPEN)
-
-	if (socket.readyState !== WebSocket.CONNECTING) {
-		return isOpened()
+async function connection(socket) {
+	let loop = 0;
+	
+	while (socket.readyState == WebSocket.CONNECTING && loop < 100) {
+		await new Promise(resolve => setTimeout(resolve, 100));
+		loop++;
 	}
-	else {
-		const intrasleep = 100
-		const ttl = timeout / intrasleep // time to loop
-		let loop = 0
-		while (socket.readyState === WebSocket.CONNECTING && loop < ttl) {
-			await new Promise(resolve => setTimeout(resolve, intrasleep))
-			loop++
-		}
-		return isOpened()
-	}
+	
+	return socket.readyState == WebSocket.OPEN;
 }
