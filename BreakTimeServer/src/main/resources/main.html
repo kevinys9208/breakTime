@@ -5,6 +5,8 @@
 <title>Break Time Game</title>
 <link rel="stylesheet" type="text/css" href="./css/main.css">
 <script type="text/javascript" src="./js/main.js"></script>
+<script type="text/javascript" src="./js/object.js"></script>
+<script type="text/javascript" src="./js/stats.js"></script>
 </head>
 <body>
 	<div class="read">
@@ -19,7 +21,16 @@
 		<select id="ipSelect">
 			<option value="localhost:45000" selected>localhost</option>
 			<option value="10.10.20.116:45000">Server-Jookwang</option>
+			<option value="jase.iptime.org:45000">Server-home</option>
 			<option value="">직접입력</option>
+		</select>
+		<p>프레임 설정</p>
+		<select id="frameSelect">
+			<option value="7" selected>144fps</option>
+			<option value="8">120fps</option>
+			<option value="11">90fps</option>
+			<option value="16">60fps</option>
+			<option value="32">30fps</option>
 		</select>
 	</div>
 	<div class="stage">

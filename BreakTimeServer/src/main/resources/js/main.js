@@ -2,7 +2,10 @@ var countInterval;
 var notice;
 var number;
 
+var objectMap;
 var functionMap;
+
+var stats;
 
 var canvas;
 var ctx;
@@ -24,18 +27,31 @@ var selfImg;
 var otherImg;
 var backImg;
 
+var nowStart;
+var currStart;
+var targetDef;
+
 var webSocket;
 
 var characterId;
 
 document.addEventListener('DOMContentLoaded', function() {
+	initializeStatsDom();
 	initializeVariables();
 	initializeControlEvent();
 	initializeDefaultServerIP();
 });
 
+function initializeStatsDom() {
+	stats = new Stats();
+	stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
+	
+	document.body.appendChild(stats.dom);
+}
+
 function initializeVariables() {
 	objectMap = new Map();
+	
 	functionMap = new Map();
 	functionMap.set('B', handleBarrage);
 	functionMap.set('C', handleCharacter);
@@ -94,10 +110,36 @@ function initializeVariables() {
 		backCanvas.height = 800;
 
 		backCtx.drawImage(backImg, 0, 0);
+		
+		currStart = performance.now();
+		window.requestAnimationFrame(render);
 	};
 
 	notice = document.getElementById('notice');
 	number = 3;
+}
+
+async function render() {
+	stats.begin();
+	
+	ctx.clearRect(0, 0, canvas.width, canvas.height);
+	ctx.drawImage(backCanvas, 0, 0);
+	
+	objectMap.forEach(value => value.draw());
+	
+	nowStart = performance.now();
+
+	def = nowStart - currStart;
+				
+	if (def <= targetDef) {
+		await new Promise(resolve => sleep(resolve, targetDef - def));
+	}
+
+	currStart = performance.now();
+	
+	stats.end();
+	
+	window.requestAnimationFrame(render);
 }
 
 function initializeWebSocket() {
@@ -122,8 +164,8 @@ function initializeWebSocket() {
 function handleMessage(e) {
 	//console.log(Date.now());
 	
-	ctx.clearRect(0, 0, canvas.width, canvas.height);
-	ctx.drawImage(backCanvas, 0, 0);
+	//ctx.clearRect(0, 0, canvas.width, canvas.height);
+	//ctx.drawImage(backCanvas, 0, 0);
 
 	var dataList = e.data.split(':');
 	dataList
@@ -141,16 +183,27 @@ function callFunction(dataArray) {
 }
 
 function handleBarrage(dataArray) {
-	ctx.drawImage(barrageCanvas, Number(dataArray[2]) - 30, Number(dataArray[3]) - 30);
+	var barrage = objectMap.get(dataArray[1]);
+	if (typeof barrage == 'undefined') {
+		barrage = new Barrage(dataArray);
+		
+		objectMap.set(dataArray[1], barrage);
+		return;
+	}
+	
+	barrage.update(dataArray);
 }
 
 function handleCharacter(dataArray) {
-	if (characterId == dataArray[1]) {
-		ctx.drawImage(selfCanvas, Number(dataArray[2]) - 30, Number(dataArray[3]) - 30);
-
-	} else {
-		ctx.drawImage(otherCanvas, Number(dataArray[2]) - 30, Number(dataArray[3]) - 30);
+	var character = objectMap.get(dataArray[1]);
+	if (typeof barrage == 'undefined') {
+		character = new Character(dataArray);
+		
+		objectMap.set(dataArray[1], character);
+		return;
 	}
+	
+	barrage.update(dataArray);
 }
 
 function handleId(dataArray) {
@@ -203,6 +256,7 @@ function initializeControlEvent() {
 			webSocket.send('LON');
 		}
 		else if (e.code == 'Space') {
+			objectMap.clear();
 			notice.innerText = '';
 			initializeWebSocket();
 		}
@@ -233,6 +287,10 @@ function initializeControlEvent() {
 			input.disabled = true;
 		}
 	});
+	
+	document.getElementById('frameSelect').addEventListener('change', function() {
+		targetDef = this.options[this.selectedIndex].value;
+	});
 }
 
 function initializeDefaultServerIP() {
@@ -257,6 +315,6 @@ async function connection(socket) {
 	return socket.readyState == WebSocket.OPEN;
 }
 
-function sleep(resolve) {
-	setTimeout(resolve, 100)
+function sleep(resolve, time = 100) {
+	setTimeout(resolve, time)
 }
