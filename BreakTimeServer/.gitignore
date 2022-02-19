@@ -73,6 +73,7 @@ local.properties
 *.class
 
 # Log file
+logs/
 *.log
 
 # BlueJ files
@@ -125,6 +126,9 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+
+# JSHInt
+.jshintrc
 
 ### Gradle ###
 .gradle
