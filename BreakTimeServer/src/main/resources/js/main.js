@@ -250,9 +250,13 @@ async function connection(socket) {
 	let loop = 0;
 	
 	while (socket.readyState == WebSocket.CONNECTING && loop < 100) {
-		await new Promise(resolve => setTimeout(resolve, 100));
+		await new Promise(sleep);
 		loop++;
 	}
 	
 	return socket.readyState == WebSocket.OPEN;
+}
+
+function sleep(resolve) {
+	setTimeout(resolve, 100)
 }
