@@ -23,7 +23,7 @@ class Character {
 	}
 	
 	draw = function() {
-		if (this.id = characterId) {
+		if (this.id == characterId) {
 			ctx.drawImage(selfCanvas, Number(this.x) - 30, Number(this.y) - 30);
 	
 		} else {

@@ -9,6 +9,7 @@
 <script type="text/javascript" src="./js/stats.js"></script>
 </head>
 <body>
+	<div class="main">
 	<div class="read">
 		<p>조작법</p>
 		<ul>
@@ -16,14 +17,18 @@
 			<li>Space를 누르면 게임에 재접속합니다.</li>
 			<li>Enter를 누르면 게임을 시작합니다.</li>
 		</ul>
+		<br>
+		<br>
 		<p>웹소켓 접속주소</p>
-		<input type="text" id="ip" style="width: 300px;" disabled="disabled">
+		<input type="text" id="ip" disabled="disabled">
 		<select id="ipSelect">
 			<option value="localhost:45000" selected>localhost</option>
 			<option value="10.10.20.116:45000">Server-Jookwang</option>
 			<option value="jase.iptime.org:45000">Server-home</option>
 			<option value="">직접입력</option>
 		</select>
+		<br>
+		<br>
 		<p>프레임 설정</p>
 		<select id="frameSelect">
 			<option value="7" selected>144fps</option>
@@ -32,10 +37,16 @@
 			<option value="16">60fps</option>
 			<option value="32">30fps</option>
 		</select>
+		<br>
+		<br>
+		<p>필터 설정</p>
+		<input type="radio" name="filter" id="radio1" value="true" checked><label for="radio1">활성화</label> 
+		<input type="radio" name="filter" id="radio2" value="false"><label for="radio2">비활성화</label>
 	</div>
-	<div class="stage">
+	<div class="stageWrapper" id="stageWrapper">
 		<div class="notice" id="notice"></div>
 		<canvas id="stage" width="800" height="800"></canvas>
+	</div>
 	</div>
 </body>
 </html>

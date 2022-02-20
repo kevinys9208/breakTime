@@ -22,10 +22,14 @@ var otherCtx;
 var backCanvas;
 var backCtx;
 
+var filterCanvas;
+var filterCtx;
+
 var barrageImg;
 var selfImg;
 var otherImg;
 var backImg;
+var filterImg;
 
 var nowStart;
 var currStart;
@@ -46,7 +50,7 @@ function initializeStatsDom() {
 	stats = new Stats();
 	stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
 	
-	document.body.appendChild(stats.dom);
+	document.getElementById('stageWrapper').appendChild(stats.dom);
 }
 
 function initializeVariables() {
@@ -110,7 +114,19 @@ function initializeVariables() {
 		backCanvas.height = 800;
 
 		backCtx.drawImage(backImg, 0, 0);
-		
+	};
+
+	filterImg = new Image();
+	filterImg .src = './img/filter.png';
+	filterImg .onload = function() {
+		filterCanvas = document.createElement('canvas');
+		filterCtx = filterCanvas.getContext('2d');
+
+		filterCanvas.width = 800;
+		filterCanvas.height = 800;
+
+		filterCtx.drawImage(filterImg, 0, 0);
+
 		currStart = performance.now();
 		window.requestAnimationFrame(render);
 	};
@@ -127,6 +143,10 @@ async function render() {
 	
 	objectMap.forEach(value => value.draw());
 	
+	if (document.querySelector('input[name="filter"]:checked').value == 'true') {
+		ctx.drawImage(filterCanvas, 0, 0);
+	}
+
 	nowStart = performance.now();
 
 	def = nowStart - currStart;
@@ -166,6 +186,8 @@ function handleMessage(e) {
 	
 	//ctx.clearRect(0, 0, canvas.width, canvas.height);
 	//ctx.drawImage(backCanvas, 0, 0);
+
+	objectMap.clear();
 
 	var dataList = e.data.split(':');
 	dataList
@@ -256,7 +278,6 @@ function initializeControlEvent() {
 			webSocket.send('LON');
 		}
 		else if (e.code == 'Space') {
-			objectMap.clear();
 			notice.innerText = '';
 			initializeWebSocket();
 		}

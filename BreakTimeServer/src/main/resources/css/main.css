@@ -1,4 +1,13 @@
-.stage {
+body, p {
+	margin: 0px;
+	padding: 0px;
+}
+
+.main {
+	padding: 20px;
+}
+
+.stageWrapper {
 	position: relative;
 	
 	width: 800px;
@@ -18,7 +27,7 @@
 	height: 200px;
 	
 	top: 300px;
-	
+
 	text-align: center;
 	
 	line-height: 200px;
@@ -29,6 +38,16 @@
 
 .read {
 	position: absolute;
-	
-	top: 100px;
+}
+
+#ip {
+	width: 300px;
+}
+
+#ipSelect {
+	width: 150px;
+}
+
+#frameSelect {
+	width: 300px;
 }
