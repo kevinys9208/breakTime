@@ -1,2 +1,2 @@
 server:
- - { group: break, type: ws, port: 45000, bossThread: 2,  workerThread: 10 }
+ - { group: break, type: http, port: 45000, bossThread: 2,  workerThread: 10 }
