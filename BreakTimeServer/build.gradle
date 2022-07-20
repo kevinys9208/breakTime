@@ -10,11 +10,12 @@ buildscript {
 plugins {
 	id 'java'
 	id 'application'
+	id 'edu.sc.seis.launch4j' version '2.5.3'
 }
 
 apply plugin: 'com.github.johnrengelman.shadow'
 
-group = 'com.raontec'
+group = 'indiv.park'
 sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
 
@@ -37,6 +38,17 @@ sourceSets {
 	main {
 		resources.srcDirs = ["src/main/java", "src/main/resources"]
 	}
+}
+
+launch4j {
+  outfile = 'GithubService.exe'
+  
+  mainClassName = 'indiv.park.breaktime.Application'
+  headerType = "console"
+  
+  jvmOptions = [ '-Xms128m', '-Xmx128m', '-XX:+UseG1GC' ]
+  
+  jarTask = project.tasks.shadowJar
 }
 
 compileJava {
